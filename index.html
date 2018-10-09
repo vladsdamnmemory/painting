@@ -1,0 +1,682 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+            name='viewport'
+            content='width=768, user-scalable=no'
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <title>Shazam и раскрась Простоквашино!</title>
+
+    <!-- Actual current document style -->
+    <style>
+
+        .slide-fade-enter-active {
+            -webkit-transition: all .3s ease;
+            -o-transition: all .3s ease;
+            transition: all .3s ease
+        }
+
+        .slide-fade-leave-active {
+            -webkit-transition: all .3s cubic-bezier(1, .5, .8, 1);
+            -o-transition: all .3s cubic-bezier(1, .5, .8, 1);
+            transition: all .3s cubic-bezier(1, .5, .8, 1)
+        }
+
+        .slide-fade-leave-to {
+            opacity: 0
+        }
+
+        .slide-fade-enter {
+            -webkit-transform: translateY(12px);
+            -ms-transform: translateY(12px);
+            transform: translateY(12px);
+            opacity: 0
+        }
+
+        .fade-enter-active, .fade-leave-active {
+            -webkit-transition: opacity .2s;
+            -o-transition: opacity .2s;
+            transition: opacity .2s
+        }
+
+        .fade-enter, .fade-leave-to {
+            opacity: 0
+        }
+
+        [v-cloak] {
+            display: none
+        }
+
+        body {
+            max-width: 768px;
+            margin: auto;
+            font-family: "Helvetica Neue", "Helvetica", "Comic Sans MS", sans-serif;
+        }
+
+        .options {
+            max-width: 740px;
+            position: fixed;
+            bottom: 30px;
+            right: 0;
+            left: 0;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-pack: justify;
+            -ms-flex-pack: justify;
+            justify-content: space-between;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+            top: auto;
+            border-radius: 18px;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            margin: auto;
+        }
+
+        .options .pick-color-block {
+            width: 90px;
+            height: 90px;
+            border-radius: 15px;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+        }
+
+        .options label {
+            width: 50px;
+            height: 50px;
+            margin: 12px;
+        }
+
+        .chosen-color {
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            border: 7px black solid !important;
+            background: url("img/checkmark.png") no-repeat center;
+            background-size: 70%;
+        }
+
+        .palette {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+            position: absolute;
+            top: -110px;
+            background: white;
+            left: 0;
+            right: 0;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            border-radius: 18px;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            border: 4px #000000 solid;
+        }
+
+        .palette::before {
+            content: "";
+            position: absolute;
+            top: 88px;
+            left: 25px;
+            border-bottom: 14px solid #000000;
+            border-left: 18px solid transparent;
+            border-right: 18px solid transparent;
+            -webkit-transform: rotate(180deg);
+            -ms-transform: rotate(180deg);
+            transform: rotate(180deg);
+        }
+
+        .palette::after {
+            content: "";
+            position: absolute;
+            top: 84px;
+            left: 26px;
+            border-bottom: 14px solid #ffffff;
+            border-left: 17px solid transparent;
+            border-right: 17px solid transparent;
+            -webkit-transform: rotate(180deg);
+            -ms-transform: rotate(180deg);
+            transform: rotate(180deg);
+        }
+
+        .palette.palette-1::before {
+            left: 135px;
+        }
+
+        .palette.palette-1::after {
+            left: 136px;
+        }
+
+        .palette.palette-2::before {
+            left: 243px;
+        }
+
+        .palette.palette-2::after {
+            left: 244px;
+        }
+
+        .palette.palette-3::before {
+            left: 350px;
+        }
+
+        .palette.palette-3::after {
+            left: 351px;
+        }
+
+        .palette.palette-4::before {
+            left: 460px;
+        }
+
+        .palette.palette-4::after {
+            left: 461px;
+        }
+
+        .palette.palette-5::before {
+            left: 569px;
+        }
+
+        .palette.palette-5::after {
+            left: 570px;
+        }
+
+        .palette.palette-6::before {
+            left: 677px;
+        }
+
+        .palette.palette-6::after {
+            left: 678px;
+        }
+
+        .palette-item {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 1px solid #333333;
+            margin: 7px;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+        }
+
+        .palette-item.chosen-color {
+
+        }
+
+        .cross {
+            width: 60px;
+            height: 60px;
+            margin: 7px;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .svg-wrapper {
+            text-align: center;
+        }
+
+        .extras {
+            font-size: 36px;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            width: 100%;
+            flex-basis: 100%;
+            padding: 18px;
+            height: 68px;
+        }
+
+        .extras p, a.raw {
+            cursor: pointer;
+            text-align: center;
+            color: #000;
+            text-decoration: none;
+            flex-basis: 20%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .extras p:first-child {
+            flex-grow: 1;
+            margin-right: 14px;
+            margin-left: 10px;
+        }
+
+        .extras p:hover, a.raw:hover {
+            /*opacity: .8;*/
+        }
+
+        .disabled {
+            opacity: .4;
+            color: gainsboro;
+        }
+
+        .adjustments {
+            position: fixed;
+            top: -160px;
+            height: 160px;
+            left: 0;
+            right: 0;
+            background-color: #ffffff;
+            margin: auto;
+            -webkit-transition: .3s;
+            -o-transition: .3s;
+            transition: .3s;
+            border: 1px black solid;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            border-top: none;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-pack: justify;
+            -ms-flex-pack: justify;
+            justify-content: space-between;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+            max-width: 768px;
+            border-left: none;
+            border-right: none;
+        }
+
+        .adjustments .roof {
+            position: absolute;
+            bottom: -60px;
+            width: 200px;
+            height: 60px;
+            color: #9a9a9a;
+            text-align: center;
+            left: 0;
+            right: 0;
+            margin: auto;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+            cursor: pointer;
+            border-radius: 0 0 20px 20px;
+            font-size: 24px;
+            border: 1px black solid;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            border-top: none;
+            background: #ffffff;
+
+        }
+
+        .adjustments .roof::before {
+            content: '';
+            display: block;
+            width: 300px;
+            position: absolute;
+            height: calc(100% + 10px);
+            top: 0;
+            left: auto;
+        }
+
+        .overlay-item .loader {
+            margin-bottom: 16px;
+        }
+
+        .adjustments .roof:hover, .adjustments .roof:active {
+            /*opacity: .7;*/
+        }
+
+        .adjustments-revealed {
+            top: 0;
+        }
+
+        .adjustments .roof.menuUnfolded {
+            color: #000000;
+        }
+
+        .overlay {
+            position: fixed;
+            z-index: 9999;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .overlay-item {
+            text-align: center;
+            font-size: 32px;
+        }
+
+        .disabled-menu-item {
+            opacity: 0.2;
+        }
+
+        .backBtn {
+            position: fixed;
+            left: 12px;
+            top: 12px;
+            background-color: fuchsia;
+            color: #ffffff;
+            padding: 12px;
+        }
+
+        .burger, .roof p {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .roof p span {
+            margin: 0 5px;
+        }
+
+        .storyReturn {
+            background: white url("img/return.png") center no-repeat;
+            background-size: 70%;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            border: 1px grey solid;
+            cursor: pointer;
+            -webkit-user-select: none;
+        }
+
+        .save-button {
+            width: 100%;
+            background-color: #007aff;
+            color: white;
+            padding: 32px;
+            border-radius: 15px;
+            box-sizing: border-box;
+            height: 122px;
+            display: flex;
+            letter-spacing: 3px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .new-image {
+            position: fixed;
+            background: #FFFFFF;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            max-width: 768px;
+            height: 100%;
+            margin: auto;
+            padding: 32px 0;
+            box-sizing: border-box;
+            z-index: 10;
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .new-image-envelope {
+            height: 100%;
+            text-align: center;
+        }
+
+        .new-image img {
+            max-width: 100%;
+            height: 100%;
+        }
+
+        .generatedClose {
+            position: absolute;
+            top: 12px;
+            right: 0;
+            left: 0;
+            width: 70px;
+            height: 70px;
+            margin: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
+            background: white;
+            border: 1px #929292 solid;
+            border-radius: 50%;
+            padding: 18px;
+        }
+
+        .vk-container {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .vk-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1000;
+        }
+
+        .vk-container a span, .vk-share-link {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .adjustments .hint {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #057aff;
+            padding: 8px 16px;
+            color: white;
+            box-sizing: border-box;
+            font-size: 24px;
+            /*border: 1px #000000 solid;*/
+            border-radius: 8px;
+            letter-spacing: 1px;
+            width: 616px;
+            text-align: center;
+        }
+    </style>
+
+    <script type="text/javascript" src="https://vk.com/js/api/share.js?93" charset="windows-1251"></script>
+    <script>
+        window.fbAsyncInit = function () {
+            FB.init({
+                appId: '2151098055102624',
+                autoLogAppEvents: true,
+                xfbml: true,
+                version: 'v3.1'
+            });
+        };
+
+        (function (d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) {
+                return;
+            }
+            js = d.createElement(s);
+            js.id = id;
+            js.src = "https://connect.facebook.net/en_US/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+    </script>
+</head>
+<body>
+
+
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function (d, w, c) {
+        (w[c] = w[c] || []).push(function () {
+            try {
+                w.yaCounter50269627 = new Ya.Metrika2({
+                    id: 50269627,
+                    clickmap: true,
+                    trackLinks: true,
+                    accurateTrackBounce: true,
+                    webvisor: true
+                });
+            } catch (e) {
+            }
+        });
+
+        let n = d.getElementsByTagName("script")[0],
+            s = d.createElement("script"),
+            f = function () {
+                n.parentNode.insertBefore(s, n);
+            };
+        s.type = "text/javascript";
+        s.async = true;
+        s.src = "https://mc.yandex.ru/metrika/tag.js";
+
+        if (w.opera == "[object Opera]") {
+            d.addEventListener("DOMContentLoaded", f, false);
+        } else {
+            f();
+        }
+    })(document, window, "yandex_metrika_callbacks2");
+</script>
+<noscript>
+    <div><img src="https://mc.yandex.ru/watch/50269627" style="position:absolute; left:-9999px;" alt=""/></div>
+</noscript>
+<!-- /Yandex.Metrika counter -->
+
+
+<!-- SVG Document -->
+<div class="svg-wrapper">
+    <object id="svgObject" type="image/svg+xml" data="img/Prostocvasheno_layer2.svg"
+            style="width: 100%; visibility: hidden;"></object>
+</div>
+
+<div id="app" v-cloak>
+
+    <transition name="fade">
+        <section class="overlay" v-if="saving">
+            <div class="overlay-item">
+                <div class="loader"><img src="img/eclipse.gif" alt=""></div>
+                <div class="">Обработка изображения...</div>
+            </div>
+        </section>
+    </transition>
+
+
+    <transition name="fade">
+        <section class="new-image" v-if="generatedImg">
+            <div class="generatedClose" @click="generatedImg = false;"><img src="img/cross.svg" alt=""></div>
+            <div class="new-image-envelope">
+                <img :src="postedUrl" @click="clickGeneratedImage($event)" alt="Изображение">
+            </div>
+        </section>
+    </transition>
+
+
+    <section class="adjustments" :class="{'adjustments-revealed' : menuRevealed}">
+        <transition name="slide-fade">
+            <div class="hint" v-if="hint"><p>Сохраните изображение перед публикацией.</p></div>
+        </transition>
+        <div class="extras">
+            <p @click="postImage()" :class="{'disabled-menu-item' : !link}">
+                <span class="save-button">СОХРАНИТЬ</span>
+            </p>
+
+            <fb-share-button :class="{disabled: !postedUrl}"></fb-share-button>
+
+            <div class="vk-container" :class="{disabled: !postedUrl}">
+                <vk-share-button></vk-share-button>
+                <div class="vk-overlay" v-if="!postedUrl" @click="hint = true;"></div>
+            </div>
+
+        </div>
+        <div class="roof" @click="clickMenu($event);"
+             :class="{'menuUnfolded' : menuRevealed}">
+            <p>
+            <span class="burger">
+                <img src="img/burger.png" alt="" v-if="!menuRevealed">
+                <img src="img/closeMenu.png" alt="" v-if="menuRevealed">
+            </span>
+                <span>МЕНЮ</span>
+            </p>
+        </div>
+    </section>
+
+    <section class="options" @click="clickPalette($event)">
+        <div class="pick-color-block storyReturn" @click="historyBack()"></div>
+
+        <template v-for="(item, index) in colors">
+            <div class="pick-color-block"
+                 :class="{'chosen-color' : someFit(item.color, item.palette)}"
+                 :style="{'background-color': item.color}"
+                 :key="index"
+                 @click.self="colorClick(item.color, index)">
+                <transition name="fade">
+                    <div :class="['palette palette-' + (index + 1)]" v-if="item.panelVisible">
+                        <template v-for="(paletteItem, paletteIndex) in item.palette">
+                            <div class="palette-item"
+                                 :class="{'chosen-color' : paletteItem === picked.color}"
+                                 :style="{'background-color': paletteItem}"
+                                 :key="paletteIndex"
+                                 @click="chooseColor(paletteItem)"></div>
+                        </template>
+                        <div class="cross" @click="closePanels()"><img src="img/cross.svg" alt=""></div>
+                    </div>
+                </transition>
+            </div>
+        </template>
+    </section>
+</div>
+
+<!-- scripts -->
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<!--<script src="js/vuejs.dev.js"></script>-->
+<script src="js/application.js"></script>
+</body>
+</html>
